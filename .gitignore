@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+
+# macOS
+.DS_Store
+*.DS_Store
+
+# IDE / Claude
+.claude/
+
+# Large raw datasets (not in this repo)
+20260513_PS/
+D1_1000fps_512x512_C001H001S0001/
+20260412_Beads/old_data/
+20260412_Beads/Beads/
+20260412_Beads/Beads2/
+20260412_Beads/20260421/
+20260412_Beads/20260424/
+
+# All .bin files by default — only the explicitly tracked ones are committed via git-lfs
+*.bin
+*.mraw
+
+# Explicitly exclude the 508MB mirror file
+20260412_Beads/mirror_50fps_83us_1024x1024x500_5/
+
+# Checkpoints and processed outputs (large, reproducible)
+dl_phase_correction/checkpoints/*.pth
+dl_phase_correction/processed_phases/
+
+# Screenshots / scratch files
+ScrS1.png
+SPOOF_DispMaps.asv
