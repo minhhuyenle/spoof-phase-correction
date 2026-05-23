@@ -126,7 +126,7 @@ def sample_ronchi(
 
 def sample_cell_blobs(
     rng: np.random.Generator,
-    n_range: tuple[int, int] = (10, 20),
+    n_range: tuple[int, int] = (15, 60),
     amp_range: tuple[float, float] = (0.5, 6.0),  # Δφ = 4π·Δn·h/λ, Δn≈0.02–0.05, h≈2–10µm, λ=860nm
 ) -> np.ndarray:
     """Superposition of random Gaussian ellipses mimicking cell OPL profiles."""
@@ -162,14 +162,16 @@ def sample_cell_blobs(
 def generate_sample(
     rng: np.random.Generator,
     pattern: str | None = None,
+    noise_prob: float = 0.75,
 ) -> dict[str, np.ndarray]:
     """
     Generate one synthetic (phi_total, phi_sample, aber_coeffs) tuple.
 
     Parameters
     ----------
-    rng     : seeded or random numpy Generator
-    pattern : "usaf" | "ronchi" | "cells" | None (random mix)
+    rng        : seeded or random numpy Generator
+    pattern    : "usaf" | "ronchi" | "cells" | None (random mix)
+    noise_prob : probability [0, 1] that measurement noise is added
 
     Returns
     -------
@@ -192,8 +194,11 @@ def generate_sample(
     phi_aber, coeffs = sample_aberration(rng)
 
     noise_std = float(_stats["noise_std"])
-    noise = rng.normal(0.0, noise_std, (H, W)).astype(np.float32)
-    noise[~_circ] = 0.0
+    if rng.random() < noise_prob:
+        noise = rng.normal(0.0, noise_std, (H, W)).astype(np.float32)
+        noise[~_circ] = 0.0
+    else:
+        noise = np.zeros((H, W), dtype=np.float32)
 
     # Unwrapped total (physics ground truth, for reference)
     phi_total_unwrapped = phi_s + phi_aber + noise
@@ -308,8 +313,11 @@ if __name__ == "__main__":
         else:
             phi_s = sample_cell_blobs(rng)
 
-        noise_map = rng.normal(0.0, noise_std, (H, W)).astype(np.float32)
-        noise_map[~_circ] = 0.0
+        if rng.random() < 0.75:
+            noise_map = rng.normal(0.0, noise_std, (H, W)).astype(np.float32)
+            noise_map[~_circ] = 0.0
+        else:
+            noise_map = np.zeros((H, W), dtype=np.float32)
 
         phi_total_unwr = phi_s + phi_aber + noise_map
         phi_total_unwr[~_circ] = 0.0
@@ -352,7 +360,7 @@ if __name__ == "__main__":
             vmin=vmin3, vmax=vmax3,
             linewidth=0, antialiased=True, alpha=0.95,
         )
-        ax3.view_init(elev=75, azim=-75)
+        ax3.view_init(elev=75, azim=-20)
         ax3.set_zlabel("rad", fontsize=7, labelpad=2)
         ax3.tick_params(labelsize=6, pad=1)
         ax3.set_xticks([])
