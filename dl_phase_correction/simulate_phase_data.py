@@ -127,7 +127,7 @@ def sample_ronchi(
 def sample_cell_blobs(
     rng: np.random.Generator,
     n_range: tuple[int, int] = (10, 20),
-    amp_range: tuple[float, float] = (0.5, 5.0),  # Δφ = 4π·Δn·h/λ, Δn≈0.02–0.05, h≈2–10µm, λ=860nm
+    amp_range: tuple[float, float] = (0.5, 6.0),  # Δφ = 4π·Δn·h/λ, Δn≈0.02–0.05, h≈2–10µm, λ=860nm
 ) -> np.ndarray:
     """Superposition of random Gaussian ellipses mimicking cell OPL profiles."""
     n_cells = rng.integers(*n_range)
