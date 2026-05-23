@@ -177,6 +177,8 @@ def parse_args():
     p.add_argument("--resume",          type=Path,  default=None,
                    help="Path to checkpoint to resume from")
     p.add_argument("--num-workers",     type=int,   default=4)
+    p.add_argument("--gpu-id",          type=int,   default=0,
+                   help="CUDA device index (default 0); ignored if no GPU available")
     return p.parse_args()
 
 
@@ -184,7 +186,7 @@ def main():
     args = parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{args.gpu_id}" if torch.cuda.is_available() else "cpu")
     print(f"Device       : {device}")
     print(f"Epochs       : {args.epochs}")
     print(f"Batch size   : {args.batch_size}")
